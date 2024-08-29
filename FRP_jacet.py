@@ -1,32 +1,8 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
-
-
-# In[2]:
-
-
 import math
-
-
-# In[3]:
-
-
 from openseespy.opensees import *
 
-
-# In[4]:
-
-
 wipe()
-
-
-# In[5]:
-
 
 # Create ModelBuilder (with two-dimensions and 3 DOF/node)
 model('basic', '-ndm', 2, '-ndf', 3)
@@ -64,10 +40,6 @@ IDctrlDOF = 1
 nStep = 500
 Dmax = Height*nStory*0.04*1.0
 Dincr = Dmax/nStep
-
-
-# In[6]:
-
 
 ######################################################
 ######################################################
@@ -109,7 +81,7 @@ unitVolume4 = (2*CB2+2*CH2)*Height*tf
 
 FRPlimit = [3,3,2,1,1,1]
 
-y[0] = 0;
+y[0] = 0
 for i in range(1,nVar+1):
     if i < 4:
         y[0] = y[0] + unitVolume1*x[i-1]*2
@@ -138,10 +110,6 @@ for i in range(1,nVar*2+1):
         Individual[i-1][0] = 0
 
 nFRP = Individual
-
-
-# In[7]:
-
 
 # Fiber definition
 # Steel fiber
@@ -186,7 +154,7 @@ eps1 = 2*fc/Ec
 eps2 = 0.0035
 
 # Fiber section
-np = 6;
+np = 6
 numBarsSec11 = 4
 numBarsSec12 = 2
 numBarsSec13 = 2
@@ -224,10 +192,6 @@ coreZ3 = coverZ3 - cover - D10 - D19/2
 nfY = 20
 nfZ = 20
 
-
-# In[8]:
-
-
 # Create nodes
 for i in range(1,nStory+2):
     for j in range(1,nSpan+2):
@@ -242,10 +206,6 @@ for i in range(2,nStory+2):
     for j in range(2,nSpan+2):
         equalDOF(i*10 + 1, i*10+j, 1)
 
-
-# In[9]:
-
-
 # mass
 StoryTotalWeight = unitWeight*(nSpan*Span)*EffectiveDepth
 SpanWeight = StoryTotalWeight/nSpan
@@ -258,10 +218,6 @@ for i in range(2,nStory+2):
             mass(i*10 + j, SpanWeight[i-2][0]/g/2,0,0)  
         else:
             mass(i*10 + j, SpanWeight[i-2][0]/g,0,0) 
-
-
-# In[10]:
-
 
 # Shear definition (assumed very large for reinforced ones)
 G = 0.4*Ec
@@ -287,10 +243,6 @@ for i in range(1,7):
         ShearPoint[i-1][3] = Vn/Kshearspring02/HSec2*10
         
     uniaxialMaterial('Hysteretic', 500+i, ShearPoint[i-1][0], ShearPoint[i-1][1], ShearPoint[i-1][2], ShearPoint[i-1][3], (-1)*ShearPoint[i-1][0], (-1)*ShearPoint[i-1][1], (-1)*ShearPoint[i-1][2], (-1)*ShearPoint[i-1][3], 0, 0, 0, 0)
-
-
-# In[11]:
-
 
 # FRP Effects on existing materials 
 uniaxialMaterial('Steel01',1,fy,Es,hardeningratio)
@@ -394,10 +346,6 @@ for i in range(1,nColumnMaterial+1):
         
         Eccu[i-1][0] = tmpeccu
 
-
-# In[12]:
-
-
 # Insert fiber
 nColumnSection = (nStory)*(nSpan+1)
 tmp1 = (nStory*2)
@@ -422,9 +370,6 @@ for i in range(1,nColumnSection+1):
         layer('straight', 1, numBarsSec25, A22, -(HSec1/2-Ccover),    BSec1/2-Ccover, -(HSec1/2-Ccover),    -(BSec1/2-Ccover))        
 
 
-# In[13]:
-
-
 ExtShearSpringData = [1,2,3,1,2,3]
 IntShearSpringData = [6,4,5]
 for i in range(1,nColumnSection+1):
@@ -447,9 +392,6 @@ patch('quad', 2, nfZ, nfY, -coverY3, coverZ3, -coverY3, -coverZ3, coverY3, -cove
 layer('straight', 1, numBarsSec41, A19,  coreY3,coreZ3,  coreY3, -coreZ3)
 layer('straight', 1, numBarsSec42, A19,  coreY3-25-D19,  coreZ3, coreY3-25-D19, -coreZ3)
 layer('straight', 1, numBarsSec43, A19, -coreY3, coreZ3, -coreY3, -coreZ3)
-
-
-# In[14]:
 
 
 # Defining beam with hinges
@@ -483,9 +425,6 @@ for i in range(1,nColumn+1):
         element('forceBeamColumn',i,10*iStory+iSpan, 10*(iStory+1)+iSpan, 1,10000+i)     
 
 
-# In[15]:
-
-
 # Manual definition
 beamIntegration('HingeRadau',10000+13, 53, HSec3*0.5,54,HSec3*0.5,990503)
 element('forceBeamColumn',13,21,22,2,10000+13)
@@ -507,9 +446,6 @@ beamIntegration('HingeRadau',10000+20, 54, HSec3*0.5,54,HSec3*0.5,990503)
 element('forceBeamColumn',20,42,43,2,10000+20)
 beamIntegration('HingeRadau',10000+21, 54, HSec3*0.5,53,HSec3*0.5,990503)
 element('forceBeamColumn',21,43,44,2,10000+21)
-
-
-# In[16]:
 
 
 # Analysis
