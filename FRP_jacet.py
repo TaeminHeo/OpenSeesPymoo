@@ -1,6 +1,9 @@
 import numpy as np
 import math
+import os
 from openseespy.opensees import *
+
+
 
 def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
 
@@ -482,30 +485,30 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
 
     #recorder('Drift', '-file', "EQDrift.out", '-time', '-iNode', 11, 21, 31, '-jNode', 21, 31, 41, '-dof', 1, '-perDirn', 2)
     #recorder('Node', '-file', "node.out", '-time', '-node', 41, '-dof', 1, 'disp')
-    recorder('Node', '-file', "node.out", '-node', 41, '-dof', 1, 'disp')
-    recorder('Node', '-file', "Vbase.out", '-node', 11, 12, 13, 14, '-dof', 1, 'reaction')
+    recorder('Node', '-file', "results/node.out", '-node', 41, '-dof', 1, 'disp')
+    recorder('Node', '-file', "results/Vbase.out", '-node', 11, 12, 13, 14, '-dof', 1, 'reaction')
 
-    recorder('Element', '-file', "ColumnEleSection6force.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  6, 'force')
-    recorder('Element', '-file', "ColumnEleSection6Deformation.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section', 6, 'deformation')
-    recorder('Element', '-file', "ColumnEleSection1force.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  1, 'force')
-    recorder('Element', '-file', "ColumnEleSection1Deformation.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  1, 'deformation')
+    recorder('Element', '-file', "results/ColumnEleSection6force.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  6, 'force')
+    recorder('Element', '-file', "results/ColumnEleSection6Deformation.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section', 6, 'deformation')
+    recorder('Element', '-file', "results/ColumnEleSection1force.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  1, 'force')
+    recorder('Element', '-file', "results/ColumnEleSection1Deformation.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  1, 'deformation')
 
-    recorder('Element', '-file', "BeamEleSection6force.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  6, 'force')
-    recorder('Element', '-file', "BeamEleSection6Deformation.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  6, 'deformation')
-    recorder('Element', '-file', "BeamEleSection1force.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  1, 'force')
-    recorder('Element', '-file', "BeamEleSection1Deformation.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  1, 'deformation')
+    recorder('Element', '-file', "results/BeamEleSection6force.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  6, 'force')
+    recorder('Element', '-file', "results/BeamEleSection6Deformation.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  6, 'deformation')
+    recorder('Element', '-file', "results/BeamEleSection1force.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  1, 'force')
+    recorder('Element', '-file', "results/BeamEleSection1Deformation.out", '-time', '-ele', 13, 14, 15, 16, 17, 18, 19, 20, 21, 'section',  1, 'deformation')
 
-    recorder('Element','-file', "EleLocalforce.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'localForce')
+    recorder('Element','-file', "results/EleLocalforce.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'localForce')
 
-    recorder('Element', '-file', "Strain1.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', 1, 'fiber',coverY1, 0, 'stressStrain')
-    recorder('Element', '-file', "Strain2.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', 1, 'fiber', -coverY1, 0, 'stressStrain')
-    recorder('Element', '-file', "Strain3.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', np, 'fiber', coverY1, 0, 'stressStrain')
-    recorder('Element', '-file', "Strain4.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', np, 'fiber', -coverY1, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain1.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', 1, 'fiber',coverY1, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain2.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', 1, 'fiber', -coverY1, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain3.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', np, 'fiber', coverY1, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain4.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', np, 'fiber', -coverY1, 0, 'stressStrain')
 
-    recorder('Element', '-file', "Strain5.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', 1, 'fiber', coverY2, 0, 'stressStrain')
-    recorder('Element', '-file', "Strain6.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', 1, 'fiber', -coverY2, 0, 'stressStrain')
-    recorder('Element', '-file', "Strain7.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', np, 'fiber', coverY2, 0, 'stressStrain')
-    recorder('Element', '-file', "Strain8.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', np, 'fiber', -coverY2, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain5.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', 1, 'fiber', coverY2, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain6.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', 1, 'fiber', -coverY2, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain7.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', np, 'fiber', coverY2, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain8.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', np, 'fiber', -coverY2, 0, 'stressStrain')
 
 
     ## constraintsType = Plain;      # default; 
