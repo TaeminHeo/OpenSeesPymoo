@@ -471,7 +471,7 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     analysis('Static')
     analyze(10)
 
-    print("Gravity load analysis completed")
+    #print("Gravity load analysis completed")
 
     loadConst('-time', 0.0)
 
@@ -567,7 +567,7 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
                 ok = analyze(1) 
                 algorithm('Newton') 
 
-    print("Pushover analysis completed!!!")
+    #print("Pushover analysis completed!!!")
 
     return y
 
