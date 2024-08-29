@@ -3,8 +3,6 @@ import math
 import os
 from openseespy.opensees import *
 
-
-
 def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
 
     # Clear model
