@@ -157,7 +157,7 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     eps2 = 0.0035
 
     # Fiber section
-    nP = 6
+    numP = 6
     numBarsSec11 = 4
     numBarsSec12 = 2
     numBarsSec13 = 2
@@ -499,13 +499,13 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
 
     recorder('Element', '-file', "results/Strain1.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', 1, 'fiber',coverY1, 0, 'stressStrain')
     recorder('Element', '-file', "results/Strain2.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', 1, 'fiber', -coverY1, 0, 'stressStrain')
-    recorder('Element', '-file', "results/Strain3.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', nP, 'fiber', coverY1, 0, 'stressStrain')
-    recorder('Element', '-file', "results/Strain4.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', nP, 'fiber', -coverY1, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain3.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', numP, 'fiber', coverY1, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain4.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 'section', numP, 'fiber', -coverY1, 0, 'stressStrain')
 
     recorder('Element', '-file', "results/Strain5.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', 1, 'fiber', coverY2, 0, 'stressStrain')
     recorder('Element', '-file', "results/Strain6.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', 1, 'fiber', -coverY2, 0, 'stressStrain')
-    recorder('Element', '-file', "results/Strain7.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', nP, 'fiber', coverY2, 0, 'stressStrain')
-    recorder('Element', '-file', "results/Strain8.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', nP, 'fiber', -coverY2, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain7.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', numP, 'fiber', coverY2, 0, 'stressStrain')
+    recorder('Element', '-file', "results/Strain8.out", '-time', '-ele', 7, 8, 9, 10, 11, 12, 'section', numP, 'fiber', -coverY2, 0, 'stressStrain')
 
 
     ## constraintsType = Plain;      # default; 
