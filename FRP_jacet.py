@@ -199,7 +199,7 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     for i in range(1,nStory+2):
         for j in range(1,nSpan+2):
             
-            node(i*10 + j, Span*(j-1), Height*(i-1) );
+            node(i*10 + j, Span*(j-1), Height*(i-1))
 
     for j in range(1,nSpan+2):
         i = 1
