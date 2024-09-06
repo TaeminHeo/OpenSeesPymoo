@@ -8,9 +8,9 @@ C0= 1.2; %3층일때
 % Ki : 건물의 탄성횡강성 Ke :건물의 유효 횡강성
 [Ke,Ki,YieldStrength,postelasticstiffness,Area02]=Bi_Linear2();
 % 탄성동적해석으로 계산된 탄성 1차 모드 주기
-load Period.out -ascii; 
+% load Period.out -ascii; 
 
-Ti=[Period];
+Ti=[3.06605237232262];
 
 % effective period of the building
 Te=Ti*(Ki/Ke)^(1/2);
@@ -106,7 +106,6 @@ for i=1:3
         C2(i) = 1.0;
     end
 end
-
 
 % C3
 stiffnessratio=postelasticstiffness/Ke;

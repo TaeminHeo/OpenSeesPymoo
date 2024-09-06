@@ -1,8 +1,9 @@
 import numpy as np
+import pandas as pd
 import math
 from openseespy.opensees import *
 
-def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
+def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
 
     # Clear model
     wipe()
@@ -44,31 +45,10 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     Dmax = Height*nStory*0.04*1.0
     Dincr = Dmax/nStep
 
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
-    #####################For end user#####################
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
-    # set objective values
-    #nVar = 6
-    #nObj = 2
-    #nCon = 12+1
-
-    #x = [8,7,0,8,8,1]
+    # Variables for objective functions and constraints
     y = np.zeros((1,nObj))
     cons = np.zeros((1,nCon))
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
-    ######################################################
+
     tf = 0.33
     AcceptanceCriteria = [0.01, 0.02, 0.04]
     CB1 = 300
@@ -198,7 +178,6 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     # Create nodes
     for i in range(1,nStory+2):
         for j in range(1,nSpan+2):
-            
             node(i*10 + j, Span*(j-1), Height*(i-1))
 
     for j in range(1,nSpan+2):
@@ -212,7 +191,6 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     # mass
     StoryTotalWeight = unitWeight*(nSpan*Span)*EffectiveDepth
     SpanWeight = StoryTotalWeight/nSpan
-    TotalWeight = sum(StoryTotalWeight)
 
     for i in range(2,nStory+2):
         for j in range(1,nSpan+2):
@@ -461,7 +439,6 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     #DisplayModel2D NodeNumbers
     #DisplayModel2D DeformedShape $ViewScale ;	# display deformed shape, the scaling factor needs to be adjusted for each model
 
-
     system('BandGeneral')
     constraints('Plain')
     numberer('RCM')
@@ -480,9 +457,8 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
     load(31, 0.333, 0.0, 0.0)
     load(41, 0.5, 0.0, 0.0)
 
-    #recorder('Drift', '-file', "EQDrift.out", '-time', '-iNode', 11, 21, 31, '-jNode', 21, 31, 41, '-dof', 1, '-perDirn', 2)
-    #recorder('Node', '-file', "node.out", '-time', '-node', 41, '-dof', 1, 'disp')
-    recorder('Node', '-file', "results/node.out", '-node', 41, '-dof', 1, 'disp')
+    recorder('Drift', '-file', "results/EQDrift.out", '-time', '-iNode', 11, 21, 31, '-jNode', 21, 31, 41, '-dof', 1, '-perDirn', 2)
+    recorder('Node', '-file', "results/node.out", '-time', '-node', 41, '-dof', 1, 'disp')
     recorder('Node', '-file', "results/Vbase.out", '-node', 11, 12, 13, 14, '-dof', 1, 'reaction')
 
     recorder('Element', '-file', "results/ColumnEleSection6force.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  6, 'force')
@@ -565,9 +541,224 @@ def opensees_configure(x, nVar=6,nObj=2,nCon=12+1):
                 print("Trying NewtonWithLineSearch ..") 
                 algorithm('NewtonLineSearch', .8) 
                 ok = analyze(1) 
-                algorithm('Newton') 
+                algorithm('Newton')
 
     #print("Pushover analysis completed!!!")
 
-    return y
+    numEigen = 1  # Only the first mode
+    eigenValues = eigen(numEigen)
+    omega1 = eigenValues[0]**0.5
+    T1 = 2 * 3.14159 / omega1
 
+    TotalWeight = sum(StoryTotalWeight)
+    [DispIO, DispLS, DispCP, Area02] = TargetDisp(TotalWeight,T1)
+
+    if DispIO > nStory*Height*0.01:
+        DispIO = nStory*Height*0.01*0.98
+        
+    if DispLS > nStory*Height*0.02:
+        DispLS = nStory*Height*0.02*0.98
+        
+    if DispCP > nStory*Height*0.04:
+        DispCP = nStory*Height*0.04*0.98
+
+    nodeIO, nodeLS, nodeCP, DriftIO, DriftLS, DriftCP, IndexStep = ReadOutput(DispIO, DispLS, DispCP, nStory) # check ReadOutput.m
+    tmpCons = DriftLS(1,1)/AcceptanceCriteria(2,1)
+
+    # objective function 1
+    y[1] = y[1] / 30492000
+    
+    # objective function 2
+    y[2] = 1/Area02*10^9
+    
+    ConsValue = EvalConstraint(nCon, nVar, x, IndexStep, Eccu) # check EvalConstraint.m
+    cons1 = [tmpCons, ConsValue]
+
+    for i in range(0,len(cons1)):
+        if cons1(i) > 1.0:
+            cons1(i) = cons1(i) - 1.0
+        else:
+            cons1(i) = 0.0
+    
+    cons =  round(cons1*100)/100
+
+    return y, cons
+
+'''
+Utility funcitons for computing objective function and constraints
+'''
+
+def EvalConstraint(nCon, nVar, x, IndexStep, Eccu):
+    return ConsValue
+
+def ReadOutput(DispIO, DispLS, DispCP, nStory):
+
+    node = pd.read_csv("results/node.out", sep=" ", header=None).to_numpy()
+    node = pd.read_csv("results/node.out", sep=" ", header=None).to_numpy()
+
+    return nodeIO, nodeLS, nodeCP, DriftIO, DriftLS, DriftCP, IndexStep
+
+
+def TargetDisp(TotalWeight,Ti):
+
+    # 1. C0
+    C0 = 1.2 # Story 3
+
+    # Ki : Elastic transverse stiffness of the building
+    # Ke : Effective lateral stiffness of the building
+    Ke, Ki, YieldStrength, postelasticstiffness, Area02 = Bi_Linear2()
+    #load Period.out -ascii
+
+    #Ti=[Period]
+    
+    # effective period of the building
+    Te = Ti*np.sqrt(Ki/Ke)
+
+    # C1
+    Ss = np.array([0.4121,0.9445,1.6220])  # 50%/50, 10%/50, 2%/50
+    S1 = np.array([0.1513,0.3468,0.6244])
+
+    Fa = np.array([1.4703,1.1222,1.0])
+    Fv = np.array([2.1947,1.7064,1.5])
+
+    Sxs = Fa * Ss
+    Sx1 = Fv * S1
+    Bs = 1.0 # damping 5%
+    B1 = 1.0 # damping 5%
+
+    Ts = (Sx1*Bs)/(Sxs*B1)
+    To = 0.2*Ts
+
+    # Sa 
+    Sa = np.zeros(3)
+    for i in range(3):
+        if Te <= To[i]:
+            Sa[i] = Sxs[i]*((5/Bs-2)*(Te/Ts[i])+0.4)
+        elif Te <= Ts[i]:
+            Sa[i] = Sxs[i]/Bs
+        elif Te > Ts[i]:
+            Sa[i] = Sx1[i]/(B1*Te)
+
+    w = TotalWeight
+    Cm = 0.9
+    R = (Sa/(YieldStrength/w))*(Cm)
+
+    C1 = np.zeros(3)
+    for i in range(3):
+        if Te >= Ts[i]:
+            C1[i] = 1.0
+        else:
+            C1[i]=( 1.0 + (R[i]-1)*Ts[i]/Te ) / R[i]
+        
+        if Te < 0.1:
+            C11 = 1.5
+
+        if (Te >= 0.1) & (Te < Ts[i]):
+            C11 = ( (1.0-1.5)/(Ts[i]-0.1) ) * (Te-0.1) + 1.5
+
+        if Te >= Ts[i]:
+            C11 = 1.0
+
+        if C1[i] > C11:
+            C1[i] = C11
+        
+        if C1[i] < 1.0:
+            C1[i]=1.0
+
+    # C2
+    C2 = np.zeros(3)
+    for i in range(3):
+        if i == 0:
+            if Te < 0.1:
+                C2[i] = 1.0
+            elif Te < Ts[i]:
+                C2[i] = (1.0 - 1.0)/(Ts[i]-0.1) * (Te-Ts[i]) + 1.0
+            else:
+                C2[i] = 1.0
+        
+        elif i == 1:
+            if Te < 0.1:
+                C2[i] = 1.3
+            elif Te < Ts[i]:
+                C2[i] = (1.1 - 1.3)/(Ts[i]-0.1) * (Te-Ts[i]) + 1.1
+            else:
+                C2[i] = 1.1
+
+        else:
+            if Te < 0.1:
+                C2[i] = 1.5
+            elif Te < Ts[i]:
+                C2[i] = (1.2 - 1.5)/(Ts[i]-0.1) * (Te-Ts[i]) + 1.2
+            else:
+                C2[i] = 1.2
+        
+        if i == 1:
+            C2[i] = 1.0
+
+    # C3
+    stiffnessratio=postelasticstiffness/Ke
+    C3 = np.zeros(3)
+    for i in range(3):
+        if postelasticstiffness < 0:
+            C3[i]=1.0 + abs(stiffnessratio)*(R[i]-1)^(3/2)/Te
+        else:
+            C3[i]=1.0
+
+    g=9806.65 #mm/sec^2
+
+    DispIO = C0*C1[0]*C2[0]*C3[0]*Sa[0]*(Te**2)*g/(4*math.pi**2)
+    DispLS = C0*C1[1]*C2[1]*C3[1]*Sa[1]*(Te**2)*g/(4*math.pi**2)
+    DispCP = C0*C1[2]*C2[2]*C3[2]*Sa[2]*(Te**2)*g/(4*math.pi**2)
+
+    return DispIO, DispLS, DispCP, Area02
+
+def Bi_Linear2():
+
+    node = pd.read_csv("results/node.out", sep=" ", header=None).to_numpy()
+    Pushover = np.vstack(([0,0],node))
+    m, n = Pushover.shape
+    Vmax = max(Pushover[:,0])
+    BiLinear = np.zeros((3,2))
+    K = 0.0
+
+    # Area from original pushover curve
+    Area01 = 0.0
+    for i in range(m-1):
+        Area01 += (Pushover[i+1,1]-Pushover[i,1])*(Pushover[i+1,0] + Pushover[i,0])/2.0
+
+    Vy = Vmax
+    flag01 = True
+    while flag01:
+        Error = 0
+
+        Vy06 = 0.6*Vy
+        i = 0
+        flag02 = True
+        while flag02:
+            i += 1
+            if Pushover[i,0] >= Vy06:
+                flag02 = False
+        
+                K = Pushover[i,0]/Pushover[i,1]
+                BiLinear[1,0] = Vy/K
+                BiLinear[1,1] = Vy
+                BiLinear[2,0] = Pushover[m-1,1]
+                BiLinear[2,1] = Pushover[m-1,0]
+            
+                Area02 = 0.5*BiLinear[1,0]*BiLinear[1,1] + (0.5*(BiLinear[2,0]-BiLinear[1,0])*(BiLinear[2,1]+BiLinear[1,1]))
+        
+        if abs(Area01-Area02) <= (0.01*Area01):
+            flag01 = False
+
+        if Vy <= 0.6*Vmax:
+            Error = 1
+            flag01 = False
+
+        Vy -= Vmax*0.01
+
+    Ke = K
+    Ki = Pushover[2,0]/Pushover[2,1]
+    YieldStrength = Vy
+    postelasticstiffness = (BiLinear[2,1]-BiLinear[1,1])/(BiLinear[2,0]-BiLinear[1,0])
+
+    return Ke, Ki, YieldStrength, postelasticstiffness, Area02
