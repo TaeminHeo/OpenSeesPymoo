@@ -564,13 +564,13 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
         DispCP = nStory*Height*0.04*0.98
 
     nodeIO, nodeLS, nodeCP, DriftIO, DriftLS, DriftCP, IndexStep = ReadOutput(DispIO, DispLS, DispCP, nStory) # check ReadOutput.m
-    tmpCons = DriftLS(1,1)/AcceptanceCriteria(2,1)
+    tmpCons = DriftLS[0]/AcceptanceCriteria[2]
 
     # objective function 1
-    y[1] = y[1] / 30492000
+    y[0][0] = y[0][0] / 30492000
     
     # objective function 2
-    y[2] = 1/Area02*10^9
+    y[0][1] = 1/Area02*10**9
     
     ConsValue = EvalConstraint(nCon, nVar, x, IndexStep, Eccu) # check EvalConstraint.m
     cons1 = [tmpCons, ConsValue]
