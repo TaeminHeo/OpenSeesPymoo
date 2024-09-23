@@ -439,6 +439,11 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     #DisplayModel2D NodeNumbers
     #DisplayModel2D DeformedShape $ViewScale ;	# display deformed shape, the scaling factor needs to be adjusted for each model
 
+    numEigen = 1  # Only the first mode
+    eigenValues = eigen(numEigen)
+    omega1 = eigenValues[0]**0.5
+    T1 = 2 * 3.14159 / omega1
+
     system('BandGeneral')
     constraints('Plain')
     numberer('RCM')
@@ -545,11 +550,6 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
 
     #print("Pushover analysis completed!!!")
 
-    numEigen = 1  # Only the first mode
-    eigenValues = eigen(numEigen)
-    omega1 = eigenValues[0]**0.5
-    T1 = 2 * 3.14159 / omega1
-
     TotalWeight = sum(StoryTotalWeight)
     [DispIO, DispLS, DispCP, Area02] = TargetDisp(TotalWeight,T1)
 
@@ -575,10 +575,10 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     cons1 = [tmpCons, ConsValue]
 
     for i in range(0,len(cons1)):
-        if cons1(i) > 1.0:
-            cons1(i) = cons1(i) - 1.0
+        if cons1[i] > 1.0:
+            cons1[i] = cons1[i] - 1.0
         else:
-            cons1(i) = 0.0
+            cons1[i] = 0.0
     
     cons =  round(cons1*100)/100
 
