@@ -462,8 +462,9 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     load(31, 0.333, 0.0, 0.0)
     load(41, 0.5, 0.0, 0.0)
 
-    recorder('Drift', '-file', "results/EQDrift.out", '-time', '-iNode', 11, 21, 31, '-jNode', 21, 31, 41, '-dof', 1, '-perDirn', 2)
+    #recorder('Drift', '-file', "results/EQDrift.out", '-time', '-iNode', 11, 21, 31, '-jNode', 21, 31, 41, '-dof', 1, '-perDirn', 2)
     recorder('Node', '-file', "results/node.out", '-time', '-node', 41, '-dof', 1, 'disp')
+    recorder('Node', '-file', "results/nodeDrift.out", '-time', '-node', 11, 21, 31, 41, '-dof', 1, 'disp')
     recorder('Node', '-file', "results/Vbase.out", '-node', 11, 12, 13, 14, '-dof', 1, 'reaction')
 
     recorder('Element', '-file', "results/ColumnEleSection6force.out", '-time', '-ele', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 'section',  6, 'force')
