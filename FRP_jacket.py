@@ -595,7 +595,35 @@ def EvalConstraint(nCon, nVar, x, IndexStep, Eccu):
 def ReadOutput(DispIO, DispLS, DispCP, nStory):
 
     node = pd.read_csv("results/node.out", sep=" ", header=None).to_numpy()
-    node = pd.read_csv("results/node.out", sep=" ", header=None).to_numpy()
+    nodeDrift = pd.read_csv("results/nodeDrift.out", sep=" ", header=None).to_numpy()
+    EQDrift = np.diff(nodeDrift)/3000
+    
+    m ,n = node.shape
+    
+    IndexStep = np.zeros(1,3)
+    
+    for i in range(1,m):
+        if ( (node[i-1,1]<=DispIO) && (node(i,1)>=DispIO) ):
+            IndexStep[0,0] = i
+            nodeIO = node[i,:]
+            DriftIO = EQDrift[i,:]
+            DriftIO[0,0] = max(EQDrift[i,2:(nStory+1)]);
+        end
+        if ( (node(i-1,2)<=DispLS) && (node(i,2)>=DispLS) )  
+            IndexStep(1,2) = i;
+            nodeLS = node(i,:);
+            DriftLS = EQDrift(i,:);
+            DriftLS(1,1) = max(EQDrift(i,2:(nStory+1)));    
+        end
+        if ( (node(i-1,2)<=DispCP) && (node(i,2)>=DispCP) )  
+            IndexStep(1,3) = i;
+            nodeCP = node(i,:);
+            DriftCP = EQDrift(i,:);
+            DriftCP(1,1) = max(EQDrift(i,2:(nStory+1)));  
+            tmp = DriftCP*1000;
+            DriftCP = round(tmp)/1000;
+            break;
+        end
 
     return nodeIO, nodeLS, nodeCP, DriftIO, DriftLS, DriftCP, IndexStep
 
