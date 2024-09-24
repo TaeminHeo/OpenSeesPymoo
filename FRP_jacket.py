@@ -46,8 +46,8 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     Dincr = Dmax/nStep
 
     # Variables for objective functions and constraints
-    y = np.zeros((1,nObj))
-    cons = np.zeros((1,nCon))
+    y = np.zeros(nObj)
+    cons = np.zeros(nCon)
 
     tf = 0.33
     AcceptanceCriteria = [0.01, 0.02, 0.04]
