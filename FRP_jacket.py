@@ -564,7 +564,7 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
         DispCP = nStory*Height*0.04*0.98
 
     nodeIO, nodeLS, nodeCP, DriftIO, DriftLS, DriftCP, IndexStep = ReadOutput(DispIO, DispLS, DispCP, nStory) # check ReadOutput.m
-    tmpCons = DriftLS[0]/AcceptanceCriteria[2]
+    tmpCons = DriftLS[0]/AcceptanceCriteria[1]
 
     # objective function 1
     y[0][0] = y[0][0] / 30492000
