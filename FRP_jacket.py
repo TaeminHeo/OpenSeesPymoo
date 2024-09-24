@@ -3,7 +3,7 @@ import pandas as pd
 import math
 from openseespy.opensees import *
 
-def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
+def opensees_configure(x, nVar=6, nObj=3, nCon=12+1):
 
     # Clear model
     wipe()
