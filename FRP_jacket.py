@@ -572,24 +572,119 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     # objective function 2
     y[0][1] = 1/Area02*10**9
     
-    ConsValue = EvalConstraint(nCon, nVar, x, IndexStep, Eccu) # check EvalConstraint.m
-    cons1 = [tmpCons, ConsValue]
-
-    for i in range(0,len(cons1)):
+    ConsValue = EvalConstraint(nCon, nVar, IndexStep, Eccu) # check EvalConstraint.m
+    cons1 = np.append([tmpCons],ConsValue)
+    
+    for i in range(len(cons1)):
         if cons1[i] > 1.0:
             cons1[i] = cons1[i] - 1.0
         else:
             cons1[i] = 0.0
     
-    cons =  round(cons1*100)/100
+    cons =  np.round(cons1*100)/100
 
     return y, cons
 
 '''
-Utility funcitons for computing objective function and constraints
+Utility functions for computing objective and constraints
 '''
 
-def EvalConstraint(nCon, nVar, x, IndexStep, Eccu):
+def EvalConstraint(nCon, nVar, IndexStep, Eccu):
+    nVar = nVar*2
+    nCon1 = nCon-1
+    ConsValue = np.zeros(nCon1)
+    tmpConsValue = np.zeros(nCon1)
+
+    ## calculation: shear strength
+    tf = 0.333
+    Ce = 0.95
+    efu_ = 0.0167
+    efu = Ce*efu_
+    efe = 0.75*efu
+    if efe > 0.004:
+        efe = 0.004
+
+    Ef = 227527
+
+    Vc = np.zeros(nVar)
+    Vs = np.zeros(nVar)
+    Vf = np.zeros(nVar)
+    Vn = np.zeros(nVar)
+
+    Nu = np.array([362340,241560,120780,362340,241560,120780,724680,483120,241560,724680,483120,241560])
+    efe = 0.004
+    factor1 = 0.95
+
+    fy = 300.0   # N/mm^2
+
+    D10 = 9.53
+    A10 = 71.3
+
+    D19 = 19.1
+    A19 = 286.5
+
+    D22 = 22.2
+    A22 = 387.1
+
+    BSec1 = 300  # external column
+    HSec1 = 300
+
+    BSec2 = 400  # internal column
+    HSec2 = 400
+
+    cover = 40
+
+    fc = 21.0
+    Ec = 4700*np.sqrt(fc)
+
+    dd1 = HSec1 - cover - D10 - D19/2
+    dd2 = HSec2 - cover - D10 - D22/2
+    d1 = HSec1
+    d2 = HSec2
+    bw1 = BSec1
+    bw2 = BSec2
+    Ag1 = BSec1*HSec1
+    Ag2 = BSec2*HSec2
+
+    space = 300
+
+    nStep = int(IndexStep[1]) # LS
+
+    ## strain (concrete fiber)
+    Strain1 = pd.read_csv("Strain1.out", sep=" ", header=None).to_numpy()
+    Strain2 = pd.read_csv("Strain2.out", sep=" ", header=None).to_numpy()
+    Strain3 = pd.read_csv("Strain3.out", sep=" ", header=None).to_numpy()
+    Strain4 = pd.read_csv("Strain4.out", sep=" ", header=None).to_numpy()
+
+    Strain5 = pd.read_csv("Strain5.out", sep=" ", header=None).to_numpy()
+    Strain6 = pd.read_csv("Strain6.out", sep=" ", header=None).to_numpy()
+    Strain7 = pd.read_csv("Strain7.out", sep=" ", header=None).to_numpy()
+    Strain8 = pd.read_csv("Strain8.out", sep=" ", header=None).to_numpy()
+
+    maxE = np.zeros(nVar)
+    StrainValue = np.zeros(nVar)
+    StrainValue02 = np.zeros((nVar,3))
+
+    for i in range(nVar):
+        if i < nVar/2.0 :
+            j=i
+            tmp1 = Strain1[nStep, 2*(j+1)]
+            tmp2 = Strain2[nStep, 2*(j+1)]
+            tmp3 = Strain3[nStep, 2*(j+1)]
+            tmp4 = Strain4[nStep, 2*(j+1)]
+        else:
+            j=i-2*3
+            tmp1 = Strain5[nStep, 2*(j+1)]
+            tmp2 = Strain6[nStep, 2*(j+1)]
+            tmp3 = Strain7[nStep, 2*(j+1)]
+            tmp4 = Strain8[nStep, 2*(j+1)]
+
+        maxE[i] = np.min([tmp1,tmp2,tmp3,tmp4])
+        StrainValue[i] = np.abs( maxE[i]/Eccu[i].item() )
+        StrainValue02[i,:] = [ maxE[i], Eccu[i].item(), np.abs(maxE[i]/Eccu[i].item()).item() ]
+        tmpConsValue[i] = StrainValue[i]
+        ConsValue[i] = tmpConsValue[i]
+
     return ConsValue
 
 def ReadOutput(DispIO, DispLS, DispCP, nStory):
