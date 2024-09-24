@@ -586,7 +586,7 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     return y, cons
 
 '''
-Utility functions for computing objective and constraints
+Utility functions for computing objectives and constraints
 '''
 
 def EvalConstraint(nCon, nVar, IndexStep, Eccu):
@@ -651,15 +651,15 @@ def EvalConstraint(nCon, nVar, IndexStep, Eccu):
     nStep = int(IndexStep[1]) # LS
 
     ## strain (concrete fiber)
-    Strain1 = pd.read_csv("Strain1.out", sep=" ", header=None).to_numpy()
-    Strain2 = pd.read_csv("Strain2.out", sep=" ", header=None).to_numpy()
-    Strain3 = pd.read_csv("Strain3.out", sep=" ", header=None).to_numpy()
-    Strain4 = pd.read_csv("Strain4.out", sep=" ", header=None).to_numpy()
+    Strain1 = pd.read_csv("results/Strain1.out", sep=" ", header=None).to_numpy()
+    Strain2 = pd.read_csv("results/Strain2.out", sep=" ", header=None).to_numpy()
+    Strain3 = pd.read_csv("results/Strain3.out", sep=" ", header=None).to_numpy()
+    Strain4 = pd.read_csv("results/Strain4.out", sep=" ", header=None).to_numpy()
 
-    Strain5 = pd.read_csv("Strain5.out", sep=" ", header=None).to_numpy()
-    Strain6 = pd.read_csv("Strain6.out", sep=" ", header=None).to_numpy()
-    Strain7 = pd.read_csv("Strain7.out", sep=" ", header=None).to_numpy()
-    Strain8 = pd.read_csv("Strain8.out", sep=" ", header=None).to_numpy()
+    Strain5 = pd.read_csv("results/Strain5.out", sep=" ", header=None).to_numpy()
+    Strain6 = pd.read_csv("results/Strain6.out", sep=" ", header=None).to_numpy()
+    Strain7 = pd.read_csv("results/Strain7.out", sep=" ", header=None).to_numpy()
+    Strain8 = pd.read_csv("results/Strain8.out", sep=" ", header=None).to_numpy()
 
     maxE = np.zeros(nVar)
     StrainValue = np.zeros(nVar)
