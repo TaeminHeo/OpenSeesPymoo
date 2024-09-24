@@ -573,15 +573,15 @@ def opensees_configure(x, nVar=6, nObj=2, nCon=12+1):
     y[0][1] = 1/Area02*10**9
     
     ConsValue = EvalConstraint(nCon, nVar, IndexStep, Eccu) # check EvalConstraint.m
-    cons1 = np.append([tmpCons],ConsValue)
+    cons1 = np.append([tmpCons],ConsValue) - 1.0
     
-    for i in range(len(cons1)):
-        if cons1[i] > 1.0:
-            cons1[i] = cons1[i] - 1.0
-        else:
-            cons1[i] = 0.0
+    #for i in range(len(cons1)):
+    #    if cons1[i] > 1.0:
+    #        cons1[i] = cons1[i] - 1.0
+    #    else:
+    #        cons1[i] = 0.0
     
-    cons =  np.round(cons1*100)/100
+    #cons =  np.round(cons1*100)/100
 
     return y, cons
 
