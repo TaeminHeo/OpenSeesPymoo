@@ -706,7 +706,12 @@ def ReadOutput(DispIO, DispLS, DispCP, nStory):
 
     node = pd.read_csv("results/node.out", sep=" ", header=None).to_numpy()
     nodeDrift = pd.read_csv("results/nodeDrift.out", sep=" ", header=None).to_numpy()
-    EQDrift = np.diff(nodeDrift)/3000
+
+    m, n = nodeDrift.shape
+    
+    EQDrift = np.zeros((m,n-1))
+    EQDrift[:,0] = nodeDrift[:,0]
+    EQDrift[:,1:] = np.diff(nodeDrift[:,1:])/3000
     
     m, n = node.shape
 
