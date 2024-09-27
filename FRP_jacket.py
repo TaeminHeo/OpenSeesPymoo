@@ -610,60 +610,6 @@ def EvalConstraint(nCon, nVar, IndexStep, Eccu):
     nCon1 = nCon-1
     ConsValue = np.zeros(nCon1)
     tmpConsValue = np.zeros(nCon1)
-
-    ## calculation: shear strength
-    tf = 0.333
-    Ce = 0.95
-    efu_ = 0.0167
-    efu = Ce*efu_
-    efe = 0.75*efu
-    if efe > 0.004:
-        efe = 0.004
-
-    Ef = 227527
-
-    Vc = np.zeros(nVar)
-    Vs = np.zeros(nVar)
-    Vf = np.zeros(nVar)
-    Vn = np.zeros(nVar)
-
-    Nu = np.array([362340,241560,120780,362340,241560,120780,724680,483120,241560,724680,483120,241560])
-    efe = 0.004
-    factor1 = 0.95
-
-    fy = 300.0   # N/mm^2
-
-    D10 = 9.53
-    A10 = 71.3
-
-    D19 = 19.1
-    A19 = 286.5
-
-    D22 = 22.2
-    A22 = 387.1
-
-    BSec1 = 300  # external column
-    HSec1 = 300
-
-    BSec2 = 400  # internal column
-    HSec2 = 400
-
-    cover = 40
-
-    fc = 21.0
-    Ec = 4700*np.sqrt(fc)
-
-    dd1 = HSec1 - cover - D10 - D19/2
-    dd2 = HSec2 - cover - D10 - D22/2
-    d1 = HSec1
-    d2 = HSec2
-    bw1 = BSec1
-    bw2 = BSec2
-    Ag1 = BSec1*HSec1
-    Ag2 = BSec2*HSec2
-
-    space = 300
-
     nStep = int(IndexStep[1]) # LS
 
     ## strain (concrete fiber)
@@ -679,7 +625,6 @@ def EvalConstraint(nCon, nVar, IndexStep, Eccu):
 
     maxE = np.zeros(nVar)
     StrainValue = np.zeros(nVar)
-    StrainValue02 = np.zeros((nVar,3))
 
     for i in range(nVar):
         if i < nVar/2.0 :
@@ -697,7 +642,6 @@ def EvalConstraint(nCon, nVar, IndexStep, Eccu):
 
         maxE[i] = np.min([tmp1,tmp2,tmp3,tmp4])
         StrainValue[i] = np.abs( maxE[i]/Eccu[i].item() )
-        StrainValue02[i,:] = [ maxE[i], Eccu[i].item(), np.abs(maxE[i]/Eccu[i].item()).item() ]
         tmpConsValue[i] = StrainValue[i]
         ConsValue[i] = tmpConsValue[i]
 
