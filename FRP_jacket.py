@@ -340,15 +340,24 @@ def opensees_configure(x, nVar=6, nObj=3, nCon=12+1):
             layer('straight', 1, numBarsSec12, A19, (HSec1/2-Ccover)*1/3, BSec1/2-Ccover, (HSec1/2-Ccover)*1/3, -(BSec1/2-Ccover))
             layer('straight', 1, numBarsSec13, A19, -(HSec1/2-Ccover)*1/3,BSec1/2-Ccover, -(HSec1/2-Ccover)*1/3,-(BSec1/2-Ccover))
             layer('straight', 1, numBarsSec14, A19, -(HSec1/2-Ccover),    BSec1/2-Ccover, -(HSec1/2-Ccover),    -(BSec1/2-Ccover))        
+        #else:
+        #    Ccover = cover + D10 + D22/2
+        #    section('Fiber',i)
+        #    patch('quad',100+i,nfZ,nfY,-HSec2/2, BSec2/2, -HSec2/2, -BSec2/2,HSec2/2, -BSec2/2,HSec2/2, BSec2/2)
+        #    layer('straight', 1, numBarsSec21, A22, HSec1/2-Ccover,       BSec1/2-Ccover, HSec1/2-Ccover,       -(BSec1/2-Ccover))
+        #    layer('straight', 1, numBarsSec22, A22, (HSec1/2-Ccover)*1/2, BSec1/2-Ccover, (HSec1/2-Ccover)*1/2, -(BSec1/2-Ccover))
+        #    layer('straight', 1, numBarsSec23, A22, 0,       BSec1/2-Ccover, 0,       -(BSec1/2-Ccover))
+        #    layer('straight', 1, numBarsSec24, A22, -(HSec1/2-Ccover)*1/2,BSec1/2-Ccover, -(HSec1/2-Ccover)*1/2,-(BSec1/2-Ccover))
+        #    layer('straight', 1, numBarsSec25, A22, -(HSec1/2-Ccover),    BSec1/2-Ccover, -(HSec1/2-Ccover),    -(BSec1/2-Ccover))
         else:
             Ccover = cover + D10 + D22/2
             section('Fiber',i)
             patch('quad',100+i,nfZ,nfY,-HSec2/2, BSec2/2, -HSec2/2, -BSec2/2,HSec2/2, -BSec2/2,HSec2/2, BSec2/2)
-            layer('straight', 1, numBarsSec21, A22, HSec1/2-Ccover,       BSec1/2-Ccover, HSec1/2-Ccover,       -(BSec1/2-Ccover))
-            layer('straight', 1, numBarsSec22, A22, (HSec1/2-Ccover)*1/2, BSec1/2-Ccover, (HSec1/2-Ccover)*1/2, -(BSec1/2-Ccover))
-            layer('straight', 1, numBarsSec23, A22, 0,       BSec1/2-Ccover, 0,       -(BSec1/2-Ccover))
-            layer('straight', 1, numBarsSec24, A22, -(HSec1/2-Ccover)*1/2,BSec1/2-Ccover, -(HSec1/2-Ccover)*1/2,-(BSec1/2-Ccover))
-            layer('straight', 1, numBarsSec25, A22, -(HSec1/2-Ccover),    BSec1/2-Ccover, -(HSec1/2-Ccover),    -(BSec1/2-Ccover))        
+            layer('straight', 1, numBarsSec21, A22, HSec2/2-Ccover,       BSec2/2-Ccover, HSec2/2-Ccover,       -(BSec2/2-Ccover))
+            layer('straight', 1, numBarsSec22, A22, (HSec2/2-Ccover)*1/2, BSec2/2-Ccover, (HSec2/2-Ccover)*1/2, -(BSec2/2-Ccover))
+            layer('straight', 1, numBarsSec23, A22, 0,       BSec2/2-Ccover, 0,       -(BSec2/2-Ccover))
+            layer('straight', 1, numBarsSec24, A22, -(HSec2/2-Ccover)*1/2,BSec2/2-Ccover, -(HSec2/2-Ccover)*1/2,-(BSec2/2-Ccover))
+            layer('straight', 1, numBarsSec25, A22, -(HSec2/2-Ccover),    BSec2/2-Ccover, -(HSec2/2-Ccover),    -(BSec2/2-Ccover))    
 
 
     ExtShearSpringData = [1,2,3,1,2,3]
