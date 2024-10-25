@@ -64,19 +64,19 @@ def opensees_configure(x, nVar=6, nObj=3, nCon=12+1):
 
     FRPlimit = [3,3,2,1,1,1]
 
-    y[0] = 0
+    y[0][0] = 0
     for i in range(1,nVar+1):
         if i < 4:
-            y[0] = y[0] + unitVolume1*x[i-1]*2
+            y[0][0] = y[0][0] + unitVolume1*x[i-1]*2
         else:
-            y[0] = y[0] + unitVolume2*x[i-1]*2
+            y[0][0] = y[0][0] + unitVolume2*x[i-1]*2
         
         
         if x[i-1] >= FRPlimit[i-1]:
             if i < 4:
-                y[0] = y[0] + ( unitVolume3 - unitVolume1 ) *2
+                y[0][0] = y[0][0] + ( unitVolume3 - unitVolume1 ) *2
             else:
-                y[0] = y[0] + ( unitVolume4 - unitVolume2 ) *2
+                y[0][0] = y[0][0] + ( unitVolume4 - unitVolume2 ) *2
             
     Individual = np.zeros((2*nVar,1))
     for i in range(1,nVar+1):
