@@ -596,11 +596,12 @@ def opensees_configure(x, nVar=6, nObj=3, nCon=12+1):
             N_re = N_re + Story[i] * individual3[i+1*nStory]*2
     y[0][2] = N_re/(6*8*6)*1.0
     
-    ConsValue = EvalConstraint(nCon, nVar, IndexStep, Eccu) # check EvalConstraint.m
     if nObj == 3:
+        ConsValue = EvalConstraint(nCon, nVar, IndexStep, Eccu) # check EvalConstraint.m
         cons1 = np.append([tmpCons],ConsValue)
     elif nObj == 4:     
         y[0][3] = tmpCons
+        ConsValue = EvalConstraint(nCon+1, nVar, IndexStep, Eccu) # check EvalConstraint.m
         cons1 = ConsValue
     
     for i in range(len(cons1)):
